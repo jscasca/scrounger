@@ -1,0 +1,20 @@
+{
+  "name": "scrounger",
+  "version": "1.0.0",
+  "description": "Scrounges for information",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "scrounger",
+    "books",
+    "crawler"
+  ],
+  "author": "seb",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  }
+}
