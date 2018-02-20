@@ -1,5 +1,6 @@
 
 const request = require("request");
+const urlutils = require("../utils/url")();
 module.exports = GoogleBooks;
 
 function GoogleBooks() {
@@ -12,7 +13,10 @@ function GoogleBooks() {
         return new Promise(function(resolve, reject){
             //
             request.get({
-                url: '',
+                url: urlutils.composeUrl(url, {
+                    q: queryString,
+                    maxResults: 10
+                }),
                 headers: {
                     'User-Agent': 'request'
                 }
@@ -23,7 +27,6 @@ function GoogleBooks() {
                     //Prepare an array of books
                     var books = [];
                     var data = JSON.parse(body);
-                    console.log(data);
                     if(data.items !== undefined) {
                         //
                         data.items.forEach(function(item) {
@@ -39,7 +42,6 @@ function GoogleBooks() {
                             }
                         });
                     }
-                    console.log(books);
                     resolve(books);
                 }
             });
@@ -47,7 +49,6 @@ function GoogleBooks() {
     };
 
     return {
-        a: console.log("logging"),
         getSearchResults: getSearchResults
     }
 };

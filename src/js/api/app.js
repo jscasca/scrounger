@@ -48,7 +48,8 @@ app.get('/', function(req, res) {
 
 app.get('/search/:search', function(req, res) {
     //
-    console.log(req);
+    var gbooks = googleBooks.getSearchResults(req.params.search); //returns a promise
+    console.log(gbooks);
     //req.url
     //params {search: search}
     //query {} whatever is after the ?
