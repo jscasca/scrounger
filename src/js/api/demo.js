@@ -27,6 +27,28 @@ app.get('/', function(req, res) {
 //     //
 // });
 
+app.post('/kuppra/test', cors(), function(req, res, next){
+    var profile = [
+        req.body.nombre,
+        req.body.apellido,
+        req.body.sexo,
+        req.body.bday,
+        req.body.plan,
+        req.body.residencia,
+        req.body.deducible,
+        req.body.suma,
+        req.body.unico,
+        req.body.coaseguro,
+        req.body.gura,
+        req.body.frecuencia,
+        req.body.preferencia
+    ];
+    res.send({
+        body: profile.join(';'),
+        stdout: 'Successful'
+    });
+});
+
 app.post('/kuppra/create', cors(), function(req, res, next) {
     //
     //console.log(req);
