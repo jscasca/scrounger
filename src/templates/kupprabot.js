@@ -67,9 +67,11 @@ steps = [
 		});
     },
 	//Step 2 - Populate and submit the login form
-    function(credentials){
+    function(){
         console.log('Step 2 - Populate and submit the login form');
-		page.evaluate(function(){
+        console.log(login);
+        console.log(login.user);
+		page.evaluate(function(credentials){
 			document.getElementById("Login1_UserName").value = credentials.user;
             document.getElementById("Login1_Password").value = credentials.password;
             var ev = document.createEvent("MouseEvents");
@@ -155,51 +157,17 @@ steps = [
                 }
                 //wait(100);
             }
-            //set a small interval
-            /*setTimeout(function() {
-                //console.log('#btn_nvo');
-                document.querySelector('#btn_nvo').dispatchEvent(click);
-            }, 100);*/
-            //document.querySelector('#60').dispatchEvent(click);
         });
     },
-    //Step 6 - Select the next thing
-    function() {
-        //
-        console.log("Step 6 - Change Plan");
-        //Check if the plan needs to be changed
-        var html = page.evaluate(function(profile) {
-            //
-            var click = document.createEvent("MouseEvents");
-            click.initEvent("click", true, true);
-            document.querySelector('.modal-footer button').dispatchEvent(click);
-
-            //var plan = document.querySelector('#ddlPlan');
-            //plan.value = profile.plan;
-            var plan = document.querySelector('#ddlPlan');
-            console.log('Plan EL');
-            console.log(plan);
-            var planid = document.getElementById('ddlPlan');
-            console.log('Plan ID');
-            console.log(planid);
-            return document.querySelectorAll("html")[0].outerHTML;
-            document.querySelector('#ddlPlan').value = profile.plan;
-
-            var selectChange = document.createEvent('HTMLEvents');
-            selectChange.initEvent("change", true, true);
-            document.querySelector('#ddlPlan').dispatchEvent(selectChange);
-        }, userProfile);
-        // var fs = require('fs');
-        // fs.write('step6.html',html,'w');
-    },
 
     function() {
         //
-        console.log("Step 7 - Change Residence");
-        if(true) {
+        console.log("Step 6 - Change Residence");
+        if(userProfile.residence !== '22') {
             //
             page.evaluate(function(profile){
                 //
+                console.log('Current plan: ' + document.querySelector('#ddlPlan').value);
                 var click = document.createEvent("MouseEvents");
                 click.initEvent("click", true, true);
                 document.querySelector('.modal-footer button').dispatchEvent(click);
@@ -214,14 +182,38 @@ steps = [
             }, userProfile);
         }
     },
+    function() {
+        //
+        console.log("Step 7 - Change Plan");
+        //Check if the plan needs to be changed
+        if(userProfile.plan !== '060001001213') {
+            page.evaluate(function(profile) {
+                //
+                console.log('Current plan: ' + document.querySelector('#ddlPlan').value);
+                var click = document.createEvent("MouseEvents");
+                click.initEvent("click", true, true);
+                document.querySelector('.modal-footer button').dispatchEvent(click);
+
+                //var plan = document.querySelector('#ddlPlan');
+                //plan.value = profile.plan;
+                document.querySelector('#ddlPlan').value = profile.plan;
+                console.log('Current plan: ' + document.querySelector('#ddlPlan').value);
+
+                var selectChange = document.createEvent('HTMLEvents');
+                selectChange.initEvent("change", true, true);
+                document.querySelector('#ddlPlan').dispatchEvent(selectChange);
+            }, userProfile);
+        }
+    },
 
     function() {
         //
-        console.log("Step 7 - Change Deducible");
-        if(true) {
+        console.log("Step 8 - Change Deducible");
+        if(userProfile.deducible !== '16000') {
             //
             page.evaluate(function(profile){
                 //
+                console.log('Current plan: ' + document.querySelector('#ddlPlan').value);
                 var click = document.createEvent("MouseEvents");
                 click.initEvent("click", true, true);
                 document.querySelector('.modal-footer button').dispatchEvent(click);
@@ -236,12 +228,39 @@ steps = [
             }, userProfile);
         }
     },
+    //Step 6 - Select the next thing
+    function() {
+        //
+        console.log("Step 9 - Verifiy once");
+        //Check if the plan needs to be changed
+        if(userProfile.plan !== '060001001213' || userProfile.residence !== '22' || userProfile.deducible !== '16000') {
+            page.evaluate(function(profile) {
+                //
+                console.log('Current plan: ' + document.querySelector('#ddlPlan').value + ' and profile plan:' + profile.plan);
+                console.log('Current deducible: ' + document.querySelector('#ddlDeducible').value + ' and profile plan:' + profile.deducible);
+                console.log('Current residence: ' + document.querySelector('#ddlResidencia').value + ' and profile plan:' + profile.residencia);
+                // var click = document.createEvent("MouseEvents");
+                // click.initEvent("click", true, true);
+                // document.querySelector('.modal-footer button').dispatchEvent(click);
+
+                // //var plan = document.querySelector('#ddlPlan');
+                // //plan.value = profile.plan;
+                // document.querySelector('#ddlPlan').value = profile.plan;
+                // console.log('Current plan: ' + document.querySelector('#ddlPlan').value);
+
+                // var selectChange = document.createEvent('HTMLEvents');
+                // selectChange.initEvent("change", true, true);
+                // document.querySelector('#ddlPlan').dispatchEvent(selectChange);
+            }, userProfile);
+        }
+    },
 
     function() {
         //
         console.log("Step 9 - Change rest of form");
         page.evaluate(function(profile) {
             //
+            console.log('Current plan: ' + document.querySelector('#ddlPlan').value);
             var suma = document.getElementById('ctl00_ContentPlaceHolder1_ddlSumaAsegurada');
             suma.value = profile.suma;
 
