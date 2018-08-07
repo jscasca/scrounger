@@ -122,7 +122,9 @@ function Cotizador() {
     var crecimiento = 0;
     for(var i = 0; i < crecimientoPorcentual.length; i++) {
       if(edad < crecimientoPorcentual[i].edad) {
-        //
+        //use that line
+        crecimiento = crecimientoPorcentual[i].crecimiento[intervalo];
+        return crecimiento;
       }
     }
     return crecimiento;
@@ -130,8 +132,31 @@ function Cotizador() {
 
   //Esta funcion debera ser mejorada
   var decrementoSumaAsegurada = function(edad) {
-    //
-    return '';
+    var decrementos = [
+      382.39, //20
+      372.65, //21
+      362.92, //22
+      353.18,
+      343.45,
+      333.71,
+      325.41,
+      317.11,
+      308.82,
+      300.52,
+      292.22,
+      284.78,
+      277.34,
+      269.91,
+      262.47,
+      255.03,
+      248.27,
+      241.51,
+      234.74,
+      227.98,
+      221.22
+    ];
+    var ventanaDeEdad = edad < 20 ? 20 : edad > 40 ? 40 : edad;
+    return decrementos[edad - 20];
   }
 
   var cotiza = function(edad, ahorro, fuma) {
@@ -142,15 +167,15 @@ function Cotizador() {
   var cotizaReal = function(edad, ahorro) {
     var ahorroUdis = ahorro / valorUdi;
     var ahorroAnualUdi = (ahorroUdis * 12) * 10;
-    var sumaAsegurada = '' * ahorroUdis;
+    var sumaAsegurada = decrementoSumaAsegurada(edad) * ahorroUdis;
     //
     return {
       sumaAsegurada: sumaAsegurada * valorUdi,
       a10: ((ahorroAnualUdi + (ahorroAnualUdi * obtenerCrecimientoPorcentual(edad, 'a10'))) * obtenerValorFuturo(10)),
-      a15: '',
-      a20: '',
-      a25: '',
-      a30: ''
+      a15: ((ahorroAnualUdi + (ahorroAnualUdi * obtenerCrecimientoPorcentual(edad, 'a15'))) * obtenerValorFuturo(15)),
+      a20: ((ahorroAnualUdi + (ahorroAnualUdi * obtenerCrecimientoPorcentual(edad, 'a20'))) * obtenerValorFuturo(20)),
+      a25: ((ahorroAnualUdi + (ahorroAnualUdi * obtenerCrecimientoPorcentual(edad, 'a25'))) * obtenerValorFuturo(25)),
+      a30: ((ahorroAnualUdi + (ahorroAnualUdi * obtenerCrecimientoPorcentual(edad, 'a30'))) * obtenerValorFuturo(30))
     }
   };
 
