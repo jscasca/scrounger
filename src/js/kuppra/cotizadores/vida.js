@@ -179,7 +179,19 @@ function Cotizador() {
     }
   };
 
+  var valida = function(rEdad, rAhorro, rFuma) {
+    
+    var edad = parseInt(rEdad);
+    var ahorro = parseInt(rAhorro);
+    if(edad > 0 && edad < 85 && ahorro > 0 && ahorro < 1000000 && rFuma) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return {
-    cotiza: cotiza
+    cotiza: cotiza,
+    valida: valida
   }
 }
