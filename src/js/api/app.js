@@ -11,15 +11,10 @@ const config = require('../config');
 const sibmailer = require('../mailers/SendinblueMailer');
 //const routes = require('./routes');
 
-const redirectUnmatched = function(req, res) {
-  res.redirect("http://prologes.com");
-};
-
 const app = express();
 app.use(cors()); //enables on all rpoutes
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
-app.use(redirectUnmatched);
 
 /*
 app.use((req, res, next)=> {
@@ -105,6 +100,11 @@ app.post('/process/reset', function(req, res) {
   }
   res.send();
 });
+
+const redirectUnmatched = function(req, res) {
+  res.redirect("http://prologes.com");
+};
+app.use(redirectUnmatched);
 
 const port = process.env.port || 3000;
 
