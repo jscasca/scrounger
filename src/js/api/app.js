@@ -11,17 +11,16 @@ const config = require('../config');
 const sibmailer = require('../mailers/SendinblueMailer');
 //const routes = require('./routes');
 
-console.log(googleBooks);
+const redirectUnmatched = function(req, res) {
+  res.redirect("http://prologes.com");
+};
 
 const app = express();
 app.use(cors()); //enables on all rpoutes
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
-app.use(redirecctUnmatched);
+app.use(redirectUnmatched);
 
-const redirecctUnmatched = function(req, res) {
-  res.redirect("http://prologes.com");
-};
 /*
 app.use((req, res, next)=> {
     res.header('Access-Control-Allow-Origin','*');
