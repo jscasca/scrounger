@@ -9,12 +9,24 @@ const bodyParser = require('body-parser');
 const googleBooks = require('../processors/googlebooks')();
 const config = require('../config');
 const sibmailer = require('../mailers/SendinblueMailer');
+const cotizadorVida = require('../kuppra/cotizadores/vida')();
 //const routes = require('./routes');
 
 const app = express();
 app.use(cors()); //enables on all rpoutes
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+// app.use(function(req, res, next) {
+//   console.log(req.method);
+//   res.header('Access-Control-Allow-Origin','*');
+//   res.header('Access-Control-Allow-Methods', 'GET,POST');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   if('OPTIONS' == req.method) {
+//     res.send(200);
+//   } else {
+//     next();
+//   }
+// });
 
 /*
 app.use((req, res, next)=> {
@@ -68,9 +80,10 @@ app.get('/scrounger/availability', function(req, res) {
 
 app.get('/kuppra/cotiza', function(req, res) {
     // Validate data
-  var edad = req.body.edad;
-  var ahorro = req.body.ahorro;
-  var fuma = req.body.fuma;
+    console.log(req);
+  var edad = req.query.edad;
+  var ahorro = req.query.ahorro;
+  var fuma = req.query.fuma;
   if(cotizadorVida.valida(edad, ahorro, fuma)) {
     res.send(cotizadorVida.cotiza(parseInt(edad), parseInt(ahorro), fuma));
   } else {
