@@ -10,6 +10,7 @@ const googleBooks = require('../processors/googlebooks')();
 const config = require('../config');
 const sibmailer = require('../mailers/SendinblueMailer');
 const cotizadorVida = require('../kuppra/cotizadores/vida')();
+const bookDepositoryAff = require('../affiliates/BookDepository')(config.bdclientid, config.bdauthkey);
 //const routes = require('./routes');
 
 const app = express();
@@ -92,6 +93,30 @@ app.get('/kuppra/cotiza', function(req, res) {
   }
 });
 
+app.post('/process/invite', function(req, res) {
+  var email = req.body.email;
+  var token = req.body.token;
+  var clubName = req.body.clubName;
+  var clubHandle = req.body.clubHandle;
+  var key = req.body.key;
+  if(key === config.mailer) {
+    var mailer = sibmailer.createMailer(config.sendinblue);
+    // TODO: make content with the token
+    var htmlContent = [
+      "<p>You have been invited to join a book club.</p>",
+      "<p>If this was not you, please ignore this email.</p>",
+      "<p>To reset your password, click on the following link <a href='http://prologes.com/reset?token=" + token + "'>http://prologes.com/reset?token=" + token + "</a> or copy the address and enter it in your web browser.</p>"
+    ].join("\n");
+    var sendmail = mailer.sendTransactionalMail(email, "Join a book club", htmlContent);
+    sendmail.then(function(r) {
+      // TODO: log success
+    }, function(err) {
+      console.log('Reset Error: ' + err.message);
+    });
+  }
+  res.send();
+});
+
 app.post('/process/reset', function(req, res) {
   var email = req.body.email;
   var token = req.body.token;
@@ -112,6 +137,18 @@ app.post('/process/reset', function(req, res) {
     });
   }
   res.send();
+});
+
+app.get('/scrounger/bookprices', function(req, res) {
+  var ip = req.connection.remoteAddress;
+  var title = req.query.title;
+  var author = req.query.author;
+  bookDepositoryAff.getPrices(ip, title, author).then((results) => {
+    res.send(results);
+  }).catch((err) => {
+    res.status(500);
+    res.send();
+  });
 });
 
 const redirectUnmatched = function(req, res) {
