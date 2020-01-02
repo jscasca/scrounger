@@ -70,6 +70,11 @@ function BookPricing(clientId, authKey) {
 
                 // Map over results
                 const bookPrices = results.map((item) => {
+
+                  if (item['url'] === undefined || item['biblio'] === undefined) {
+                    return null;
+                  }
+                  // check name and author? maybe
                   const url = item['url'].reduce((acc, itemUrl) => {
                     if (acc === '' && itemUrl['$']['type'] === 'direct') {
                       return itemUrl['_'];
@@ -82,23 +87,32 @@ function BookPricing(clientId, authKey) {
                   }, '');
 
                   // images: [{image: [{ _: url, $: {nma,e width, height}}]}]
-                  const images = item['images'].reduce((acc, img) => {
-                    return img['image'].reduce((acc, image) => {
-                      return {...acc, ...{
-                        [image['$']['name']]: image['_']
-                      }}
-                    }, {});
+                  let images;
+                  if (item['images'] === undefined) {
+                    images = undefined;
+                  } else {
+                    images = item['images'].reduce((acc, img) => {
+                      return img['image'].reduce((acc, image) => {
+                        return {...acc, ...{
+                          [image['$']['name']]: image['_']
+                        }}
+                      }, {});
 
-                  }, {});
+                    }, {});
+                  }
 
                   // Similar to images
                   const pricing = item['pricing'].reduce((acc, prices) => {
                     return prices['price'].reduce((acc, price) => {
+                      const aux = {};
+                      if (price['retail'] !== undefined) {
+                        aux['retail'] = price['retail'].reduce((acc, retail) => retail, '');
+                      }
+                      if (price['selling'] !== undefined) {
+                        aux['sale'] = price['selling'].reduce((acc, sale) => sale, '');
+                      }
                       return {...acc, ...{
-                        [price['$']['currency']]: {
-                          'retail': price['retail'].reduce((acc, retail) => retail, ''),
-                          'sale': price['selling'].reduce((acc, sale) => sale, '')
-                        }
+                        [price['$']['currency']]: aux
                       }};
                     }, {});
                   }, {});
@@ -113,7 +127,7 @@ function BookPricing(clientId, authKey) {
 
                 const bookPricing = {
                   last: (new Date()).getTime(),
-                  list: bookPrices
+                  list: bookPrices.filter(item => item !== null)
                 };
 
                 console.log('SIZING:' + sizeof(bookPricing));
