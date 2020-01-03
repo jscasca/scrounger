@@ -74,7 +74,7 @@ function BookPricing(clientId, authKey) {
                   if (item['url'] === undefined || item['biblio'] === undefined) {
                     return null;
                   }
-                  // check name and author? maybe
+                  // TODO: check name and author? maybe
                   const url = item['url'].reduce((acc, itemUrl) => {
                     if (acc === '' && itemUrl['$']['type'] === 'direct') {
                       return itemUrl['_'];
