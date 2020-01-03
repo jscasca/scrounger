@@ -83,7 +83,7 @@ function BookPricing(clientId, authKey) {
                   }, '');
 
                   const title = item['biblio'].reduce((acc, itemBiblio) => {
-                    return itemBiblio['title'];
+                    return itemBiblio['title'][0];
                   }, '');
 
                   // images: [{image: [{ _: url, $: {nma,e width, height}}]}]
