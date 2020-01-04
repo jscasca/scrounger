@@ -70,58 +70,72 @@ function BookPricing(clientId, authKey) {
 
                 // Map over results
                 const bookPrices = results.map((item) => {
+                  // TODO: remove this try/catch don't be lazy
+                  try {
 
-                  if (item['url'] === undefined || item['biblio'] === undefined) {
-                    return null;
-                  }
-                  // TODO: check name and author? maybe
-                  const url = item['url'].reduce((acc, itemUrl) => {
-                    if (acc === '' && itemUrl['$']['type'] === 'direct') {
-                      return itemUrl['_'];
+                    if (item['url'] === undefined || item['biblio'] === undefined) {
+                      return null;
                     }
-                    return acc;
-                  }, '');
+                    // TODO: check name and author? maybe
+                    const url = item['url'].reduce((acc, itemUrl) => {
+                      if (acc === '' && itemUrl['$']['type'] === 'direct') {
+                        return itemUrl['_'];
+                      }
+                      return acc;
+                    }, '');
 
-                  const title = item['biblio'].reduce((acc, itemBiblio) => {
-                    return itemBiblio['title'][0];
-                  }, '');
+                    if (item['biblio'].length < 1) {
+                      return null;
+                    }
+                    const title = item['biblio'].reduce((acc, itemBiblio) => {
+                      return itemBiblio['title'][0];
+                    }, '');
 
-                  // images: [{image: [{ _: url, $: {nma,e width, height}}]}]
-                  let images;
-                  if (item['images'] === undefined) {
-                    images = undefined;
-                  } else {
-                    images = item['images'].reduce((acc, img) => {
-                      return img['image'].reduce((acc, image) => {
-                        return {...acc, ...{
-                          [image['$']['name']]: image['_']
-                        }}
+                    // images: [{image: [{ _: url, $: {nma,e width, height}}]}]
+                    let images;
+                    if (item['images'] === undefined) {
+                      images = undefined;
+                    } else {
+                      images = item['images'].reduce((acc, img) => {
+                        return img['image'].reduce((acc, image) => {
+                          return {...acc, ...{
+                            [image['$']['name']]: image['_']
+                          }}
+                        }, {});
+
                       }, {});
+                    }
 
+                    // Similar to images
+                    // if (item['pricing'] === undefined) {
+                    //   return null;
+                    // }
+                    const pricing = item['pricing'].reduce((acc, prices) => {
+                      return prices['price'].reduce((acc, price) => {
+                        const aux = {};
+                        if (price['retail'] !== undefined) {
+                          aux['retail'] = price['retail'].reduce((acc, retail) => retail, '');
+                        }
+                        if (price['selling'] !== undefined) {
+                          aux['sale'] = price['selling'].reduce((acc, sale) => sale, '');
+                        }
+                        return {...acc, ...{
+                          [price['$']['currency']]: aux
+                        }};
+                      }, {});
                     }, {});
-                  }
 
-                  // Similar to images
-                  const pricing = item['pricing'].reduce((acc, prices) => {
-                    return prices['price'].reduce((acc, price) => {
-                      const aux = {};
-                      if (price['retail'] !== undefined) {
-                        aux['retail'] = price['retail'].reduce((acc, retail) => retail, '');
-                      }
-                      if (price['selling'] !== undefined) {
-                        aux['sale'] = price['selling'].reduce((acc, sale) => sale, '');
-                      }
-                      return {...acc, ...{
-                        [price['$']['currency']]: aux
-                      }};
-                    }, {});
-                  }, {});
+                    return {
+                      url: url,
+                      title: title,
+                      img: images,
+                      price: pricing
+                    }
 
-                  return {
-                    url: url,
-                    title: title,
-                    img: images,
-                    price: pricing
+                  } catch(ex) {
+                    console.log('Failed for item-----------');
+                    console.log(JSON.stringify(item));
+                    return null;
                   }
                 });
 
@@ -129,8 +143,6 @@ function BookPricing(clientId, authKey) {
                   last: (new Date()).getTime(),
                   list: bookPrices.filter(item => item !== null)
                 };
-
-                console.log('SIZING:' + sizeof(bookPricing));
                 // Set in cache
                 cache.set(cacheKey, bookPricing);
                 // Resolve
